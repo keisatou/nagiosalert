@@ -1,0 +1,61 @@
+#!/bin/bash
+# vim: filetype=sh
+
+#
+# Functions
+#
+
+usage () {
+    pn=`basename "$0"`
+    cat <<EOS
+SYNOPSYS
+    $pn (enable|disable) <hostname> <service> <cluster>
+DESCRIPTION
+    (enable|disable) <service> notification on a <hostname> within a <cluster>.
+EOS
+    exit 1
+}
+
+init_conf () {
+    # get directory name this script resides.
+    cd $(dirname $0)
+    BIN_DIR=$PWD
+
+    # set global variables.
+    source "${BIN_DIR}/nagiosalert.conf"
+}
+
+#
+# Main
+#
+
+main () {
+    ## Argument check
+    [ $# -lt 4 ] && usage
+    case $1 in
+        "enable")
+            command='ENABLE'
+            ;;
+        "disable")
+            command='DISABLE'
+            ;;
+        *)
+            usage
+            ;;
+    esac
+
+    init_conf
+
+    host="$2"
+    service="$3"
+    cluster="$4"
+    # replace placeholder <CLUSTER> with command line arg <cluster>.
+    commandfile=$(echo "${CNF_COMMANDFILE:-/usr/local/nagios/<CLUSTER>var/rw/nagios.cmd}" | sed "s/<CLUSTER>/${cluster}\//")
+    cmd="[`date +%s`] ${command}_SVC_NOTIFICATIONS;${host};${service}"
+    echo "$cmd"
+    echo "$cmd" > "$commandfile"
+}
+
+main "$@"
+
+exit 0
