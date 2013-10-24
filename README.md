@@ -29,3 +29,7 @@ CNF_COMMANDFILE="${ROOT}/<CLUSTER>var/rw/nagios.cmd"
 ```
 ./nagiosalert enable host_name service_name cluster_name
 ```
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/keisatou/nagiosalert/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
